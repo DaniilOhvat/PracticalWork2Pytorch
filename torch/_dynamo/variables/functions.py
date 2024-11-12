@@ -261,16 +261,6 @@ class UserFunctionVariable(BaseUserFunctionVariable):
         for idx, name, cell in zip(
             itertools.count(), self.fn.__code__.co_freevars, closure
         ):
-            # This is critical, because we must make sure the same cell object
-            # is mapped to the same Dynamo representation. For regular cells we
-            # ensure that by checking them against `SideEffects`, and for
-            # unboxede cells (from the root frame), we ensure that via this
-            # `match_nested_cell` call.
-            var = root_tx.lookup_variable_for_captured_cell(cell)
-            if var is not None:
-                result[name] = var
-                continue
-
             # TODO refactor these 3 branches.
             side_effects = parent.output.side_effects
             if cell in side_effects:
